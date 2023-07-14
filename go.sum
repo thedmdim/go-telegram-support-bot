@@ -1,0 +1,4 @@
+github.com/NicoNex/echotron/v3 v3.25.1 h1:0PZjtZpcGHNp3OVxhkcq6hZWz9zGjyNAWeA5Jo+bUig=
+github.com/NicoNex/echotron/v3 v3.25.1/go.mod h1:LpP5IyHw0y+DZUZMBgXEDAF9O8feXrQu7w7nlJzzoZI=
+github.com/mattn/go-sqlite3 v1.14.17 h1:mCRHCLDUBXgpKAqIKsaAaAsrAlbkeomtRFKXh2L6YIM=
+github.com/mattn/go-sqlite3 v1.14.17/go.mod h1:2eHXhiwb8IkHr+BDWZGa96P6+rkvnG63S2DGjv9HUNg=
