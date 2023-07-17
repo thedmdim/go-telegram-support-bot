@@ -1,20 +1,12 @@
 package main
 
-import (
-	"log"
-	"os"
-	"strconv"
-)
+import "os"
 
-var supportChatID string = os.Getenv("GROUP")
+
+var chatID string = os.Getenv("CHAT_ID")
 var token string = os.Getenv("TOKEN")
 
 func main() {
-	i, err := strconv.ParseInt(supportChatID, 10, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	bot := NewBot(i, token)
+	bot := NewBot(chatID, token)
 	bot.Start()
 }

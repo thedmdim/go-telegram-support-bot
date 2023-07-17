@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"math"
+	"strconv"
 	"sync"
 
 	"github.com/NicoNex/echotron/v3"
@@ -13,16 +13,17 @@ import (
 
 type Bot struct {
 	SupportChat int64
+	SupportChatForLinks string
 	Token string
 	mu sync.Mutex
 	Storage *sql.DB
 	API echotron.API
 }
 
-func NewBot(chatID int64, token string) *Bot {
+func NewBot(chat, token string) *Bot {
 
 	db, err := sql.Open("sqlite3", "bot.db")
-	// db.SetMaxOpenConns(1)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,8 +32,14 @@ func NewBot(chatID int64, token string) *Bot {
 		log.Fatal(err)
 	}
 
+	chatID, err := strconv.ParseInt(chatID, 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &Bot{
 		SupportChat: chatID,
+		SupportChatForLinks: string([]rune(chat)[4:]),
 		Token: token,
 		Storage: db,
 		API: echotron.NewAPI(token),
@@ -155,13 +162,19 @@ func (b *Bot) OnChatMessage(message *echotron.Message) {
 		return
 	}
 
+	if message.ReplyToMessage == nil {
+		return
+	} else if message.ReplyToMessage.From.ID != b.SupportChat {
+		return
+	}
+
 	userID, _ := b.FindMessage(BySupportChatMessagID, message.ReplyToMessage.ID)
 
 	if userID == 0 {
 		opts := &echotron.MessageOptions{
 			ParseMode: "Markdown",
 		}
-		content := fmt.Sprintf("Отправитель [сообщения](t.me/c/%d/%d) не найден в БД", TrimMinus100(b.SupportChat), message.ReplyToMessage.ID)
+		content := fmt.Sprintf("Отправитель [сообщения](t.me/c/%s/%d) не найден в БД", b.SupportChatForLinks, message.ReplyToMessage.ID)
 		b.API.SendMessage(content, b.SupportChat, opts)
 		return
 	}
@@ -236,10 +249,4 @@ func (b *Bot) OnUserEditedMessage(message *echotron.Message) {
 	message.Text = header + "\n\n" + message.Text
 	_, chatMessageID := b.FindMessage(ByUserChatMessageID, message.ID)
 	b.API.EditMessageText(message.Text, echotron.NewMessageID(b.SupportChat, chatMessageID), opts)
-}
-
-func TrimMinus100(number int64) int64 {
-	digits := int(math.Log10(float64(number))) + 1
-	power := int64(math.Pow10(digits - 3))
-	return number % power
 }
