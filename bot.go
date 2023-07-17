@@ -32,7 +32,7 @@ func NewBot(chat, token string) *Bot {
 		log.Fatal(err)
 	}
 
-	chatID, err := strconv.ParseInt(chatID, 10, 64)
+	chatID, err := strconv.ParseInt(chat, 10, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
