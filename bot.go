@@ -199,7 +199,11 @@ func (b *Bot) OnUserMessage(message *echotron.Message) {
 	if string([]rune(message.Text)[0]) == "/" {		
 		switch message.Text {
 		case "/start":
-			b.API.SendMessage("Welcome to support ARK Sign! Please describe your project.", message.From.ID, nil)
+			opts := &echotron.MessageOptions{
+				ParseMode: "Markdown",
+				DisableWebPagePreview: true,
+			}
+			b.API.SendMessage("Welcome to support DAO ARK support! Fill the [form](https://docs.google.com/forms/d/e/1FAIpQLScDd4WVe-ZSBTDibzqid8cwcozrmUektfms-NL7Yt_eo4Jitg/viewform) to become investor", message.From.ID, opts)
 		default:
 			b.API.SendMessage("There is no such command", message.From.ID, nil)
 		}
